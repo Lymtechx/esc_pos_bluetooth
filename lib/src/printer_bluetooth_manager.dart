@@ -8,6 +8,7 @@
 
 import 'dart:async';
 import 'dart:io';
+
 // import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_bluetooth_basic/flutter_bluetooth_basic.dart';
@@ -16,10 +17,13 @@ import './enums.dart';
 /// Bluetooth printer
 class PrinterBluetooth {
   PrinterBluetooth(this._device);
+
   final BluetoothDevice _device;
 
   String get name => _device.name;
+
   String get address => _device.address;
+
   int get type => _device.type;
 }
 
@@ -33,10 +37,12 @@ class PrinterBluetoothManager {
   PrinterBluetooth? _selectedPrinter;
 
   final BehaviorSubject<bool> _isScanning = BehaviorSubject.seeded(false);
+
   Stream<bool> get isScanningStream => _isScanning.stream;
 
   final BehaviorSubject<List<PrinterBluetooth>> _scanResults =
       BehaviorSubject.seeded([]);
+
   Stream<List<PrinterBluetooth>> get scanResults => _scanResults.stream;
 
   Future _runDelayed(int seconds) {
@@ -135,7 +141,9 @@ class PrinterBluetoothManager {
     _runDelayed(timeout).then((dynamic v) async {
       if (_isPrinting) {
         _isPrinting = false;
-        completer.complete(PosPrintResult.timeout);
+        if (!completer.isCompleted) {
+          completer.complete(PosPrintResult.timeout);
+        }
       }
     });
 
